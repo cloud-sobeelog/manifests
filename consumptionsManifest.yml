@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumptions
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consumptions
+  template:
+    metadata:
+      labels:
+        app: consumptions
+    spec:
+      containers:
+      - name: consumptions
+        image: jaehuilee/consumptions:0.1
+        envFrom:
+          - secretRef:
+              name: consumptions-secret
+        ports:
+        - containerPort: 8081 
+        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: consumptions
+spec:
+  selector:
+    app: consumptions
+  ports:
+  - protocol: TCP
+    port: 3000
+    targetPort: 8081
+  type: ClusterIP

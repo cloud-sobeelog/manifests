@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user
+  template:
+    metadata:
+      labels:
+        app: user
+    spec:
+      containers:
+      - name: user
+        image: choiyoorim/user:latest
+        envFrom:
+        - secretRef:
+            name: user-secret
+        ports:
+        - containerPort: 8081 # 내부 컨테이너 포트
+        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user
+spec:
+  selector:
+    app: user
+  ports:
+  - protocol: TCP
+    port: 3000 
+    targetPort: 8081 
+  type: ClusterIP
